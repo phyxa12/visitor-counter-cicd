@@ -10,6 +10,9 @@ services:
     ports:
       - "8090:8080"
       - "50090:50000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     volumes:
       - /var/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock

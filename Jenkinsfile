@@ -41,6 +41,7 @@ pipeline {
                 sh '''
                     mkdir -p ${FRONTEND_DIR}
                     cp -rf frontend/* ${FRONTEND_DIR}/
+                    docker rm -f visitor-backend visitor-frontend 2>/dev/null || true
                     docker compose up -d --force-recreate --remove-orphans
                     docker compose ps
                 '''

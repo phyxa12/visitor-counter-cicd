@@ -1,3 +1,5 @@
+name: visitor-counter
+
 services:
   backend:
     build:
