@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Visitor Counter Log — Cloud Computing Chunin Exam</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #1e293b;
+      --panel-2: #0f172a;
+      --border: rgba(148, 163, 184, 0.16);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #6366f1;
+      --ok: #22c55e;
+      --danger: #ef4444;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+      padding: 22px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+    header h1 { margin: 0; font-size: 1.55rem; letter-spacing: -0.01em; }
+    header p { margin: 4px 0 0; font-size: 0.9rem; opacity: 0.92; }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+    .dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+    .dot.err { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+    main { max-width: 1120px; margin: 0 auto; padding: 24px 20px 56px; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+    }
+    .card .label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .card .value {
+      font-size: 2.05rem;
+      font-weight: 700;
+      margin-top: 6px;
+      color: var(--accent);
+    }
+    .card .value.small {
+      font-size: 1.05rem;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    h2 { margin: 0 0 14px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+    form { display: grid; gap: 12px; }
+    label { font-size: 0.85rem; color: var(--muted); display: grid; gap: 6px; }
+    input[type="text"], input[type="search"] {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+    }
+    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+    .chip {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      cursor: pointer;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+
+    button {
+      cursor: pointer;
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 0.05s ease, opacity 0.2s;
+    }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1120;
+    }
+    .btn-ghost {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      font-size: 0.84rem;
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 5px 12px;
+      font-size: 0.8rem;
+    }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+
+    .bars { display: grid; gap: 10px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 165px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .bar-row .name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+      font-family: Consolas, monospace;
+    }
+    .bar-track {
+      background: var(--panel-2);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.35s ease;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .toolbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td.mono { font-family: Consolas, monospace; font-size: 0.84rem; }
+    tr.new-row { animation: highlight 1.2s ease; }
+    @keyframes highlight {
+      from { background: rgba(56, 189, 248, 0.25); }
+      to { background: transparent; }
+    }
+    .empty { text-align: center; color: var(--muted); padding: 26px; }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--ok);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      transform: translateY(130%);
+      transition: transform 0.28s ease;
+      max-width: 380px;
+      font-size: 0.88rem;
+      z-index: 50;
+    }
+    .toast.show { transform: translateY(0); }
+    .toast.error { border-left-color: var(--danger); }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 30px;
+    }
+    code {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>&#128202; Web Visitor Counter Log</h1>
+      <p>Studi Kasus #5 &mdash; Sistem Pencatat Statistik Kunjungan Situs Web Laboratorium</p>
+    </div>
+    <div class="status-pill" title="Status koneksi ke Backend Python REST API">
+      <span id="statusDot" class="dot"></span>
+      <span id="statusText">Menghubungkan ke Backend...</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="cards">
+      <div class="card">
+        <div class="label">Total Hit Kunjungan</div>
+        <div class="value" id="totalHits">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Pengunjung Unik</div>
+        <div class="value" id="uniqueVisitors">0</div>
+      </div>
+      <div class="card">
+        <div class="label">Halaman Terpopuler</div>
+        <div class="value small" id="topPage">-</div>
+      </div>
+      <div class="card">
+        <div class="label">Kunjungan Terakhir</div>
+        <div class="value small" id="lastVisit">-</div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <h2>&#10133; Tambah Log Kunjungan (POST /logs)</h2>
+        <form id="logForm" autocomplete="off">
+          <label>
+            Halaman yang Dikunjungi *
+            <input type="text" id="pageInput" name="page" placeholder="/praktikum/cloud-computing" maxlength="200" required />
+          </label>
+          <div class="chips">
+            <span class="chip" data-page="/beranda">/beranda</span>
+            <span class="chip" data-page="/praktikum/docker">/praktikum/docker</span>
+            <span class="chip" data-page="/praktikum/jenkins-cicd">/praktikum/jenkins-cicd</span>
+            <span class="chip" data-page="/inventaris-lab">/inventaris-lab</span>
+          </div>
+          <label>
+            Nama / NIM Pengunjung
+            <input type="text" id="visitorInput" name="visitor" placeholder="Faiz - 101012330071" maxlength="200" />
+          </label>
+          <button class="btn-primary" type="submit" id="submitBtn">Simpan Log Kunjungan</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>&#128200; Statistik Hit per Halaman</h2>
+        <div class="bars" id="bars">
+          <div class="empty">Belum ada data kunjungan</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <div class="toolbar">
+        <h2 style="margin: 0;">&#128450;&#65039; Riwayat Log Kunjungan (GET &amp; DELETE /logs)</h2>
+        <div class="toolbar-actions">
+          <input type="search" id="searchInput" placeholder="Cari halaman / pengunjung..." />
+          <label style="display: inline-flex; gap: 6px; align-items: center; color: var(--muted);">
+            <input type="checkbox" id="autoRefresh" checked /> Auto-refresh 5s
+          </label>
+          <button class="btn-ghost" id="quickHitBtn" type="button">+1 Hit Cepat</button>
+          <button class="btn-ghost" id="refreshBtn" type="button">&#8635; Refresh</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Halaman</th>
+              <th>Pengunjung</th>
+              <th>IP Address</th>
+              <th>Waktu Kunjungan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="logTable">
+            <tr><td colspan="6" class="empty">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Frontend: Nginx + Vanilla JS (Bind Mount) &middot;
+      Backend: Python REST API (Named Volume <code>visitor-log-data</code> &rarr; <code>visitor_logs.json</code>) &middot;
+      Network: <code>app-net</code>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = "/api";
+    const $ = (id) => document.getElementById(id);
+    let cachedLogs = [];
+    let lastCount = null;
+    let refreshTimer = null;
+    let apiVersion = null;
+
+    function showToast(message, isError = false) {
+      const el = $("toast");
+      el.textContent = message;
+      el.className = "toast show" + (isError ? " error" : "");
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    function setStatus(ok, text) {
+      $("statusDot").className = "dot " + (ok ? "ok" : "err");
+      $("statusText").textContent = text;
+    }
+
+    function formatTime(iso) {
+      const d = new Date(iso);
+      return isNaN(d) ? iso : d.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "medium" });
+    }
+
+    async function requestApi(path, options = {}) {
+      const res = await fetch(API_BASE + path, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      let data = null;
+      try { data = await res.json(); } catch (_) {}
+      if (!res.ok) {
+        throw new Error((data && data.error) || `HTTP ${res.status}`);
+      }
+      return data;
+    }
+
+    function createCell(text, className = "") {
+      const td = document.createElement("td");
+      if (className) td.className = className;
+      td.textContent = text;
+      return td;
+    }
+
+    function renderStats(data) {
+      $("totalHits").textContent = data.total_hits;
+      $("uniqueVisitors").textContent = data.unique_visitors;
+      const pages = Object.entries(data.hits_per_page || {});
+      $("topPage").textContent = pages.length ? `${pages[0][0]} (${pages[0][1]} hit)` : "-";
+      const last = data.logs[data.logs.length - 1];
+      $("lastVisit").textContent = last ? formatTime(last.timestamp) : "-";
+
+      const bars = $("bars");
+      bars.innerHTML = "";
+      if (!pages.length) {
+        bars.innerHTML = '<div class="empty">Belum ada data kunjungan</div>';
+        return;
+      }
+      const maxHits = pages[0][1];
+      pages.slice(0, 8).forEach(([page, count]) => {
+        const row = document.createElement("div");
+        row.className = "bar-row";
+
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = page;
+        name.title = page;
+
+        const track = document.createElement("div");
+        track.className = "bar-track";
+        const fill = document.createElement("div");
+        fill.className = "bar-fill";
+        fill.style.width = `${(count / maxHits) * 100}%`;
+        track.appendChild(fill);
+
+        const num = document.createElement("strong");
+        num.textContent = count;
+
+        row.append(name, track, num);
+        bars.appendChild(row);
+      });
+    }
+
+    function renderTable(logs) {
+      const tbody = $("logTable");
+      tbody.innerHTML = "";
+      const q = $("searchInput").value.trim().toLowerCase();
+
+      const indexed = logs
+        .map((log, index) => ({ log, index }))
+        .filter(({ log }) => {
+          if (!q) return true;
+          return (
+            (log.page || "").toLowerCase().includes(q) ||
+            (log.visitor || "").toLowerCase().includes(q) ||
+            (log.ip || "").toLowerCase().includes(q)
+          );
+        })
+        .reverse();
+
+      if (!indexed.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Belum ada log kunjungan yang sesuai</td></tr>';
+        return;
+      }
+
+      indexed.forEach(({ log, index }) => {
+        const tr = document.createElement("tr");
+        if (lastCount !== null && index >= lastCount) tr.className = "new-row";
+        tr.append(
+          createCell(`#${index}`, "mono"),
+          createCell(log.page, "mono"),
+          createCell(log.visitor),
+          createCell(log.ip, "mono"),
+          createCell(formatTime(log.timestamp))
+        );
+        const tdAction = document.createElement("td");
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn-danger";
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", () => deleteLog(index, delBtn));
+        tdAction.appendChild(delBtn);
+        tr.appendChild(tdAction);
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadLogs() {
+      try {
+        const data = await requestApi("/logs");
+        cachedLogs = data.logs || [];
+        renderStats(data);
+        renderTable(cachedLogs);
+        lastCount = cachedLogs.length;
+        setStatus(true, "Backend Aktif" + (apiVersion ? ` · v${apiVersion}` : ""));
+      } catch (err) {
+        setStatus(false, "Backend Tidak Terjangkau");
+        console.warn("Gagal memuat log:", err.message);
+      }
+    }
+
+    async function addLog(page, visitor) {
+      const res = await requestApi("/logs", {
+        method: "POST",
+        body: JSON.stringify({ page, visitor }),
+      });
+      await loadLogs();
+      return res;
+    }
+
+    async function deleteLog(index, btn) {
+      btn.disabled = true;
+      try {
+        const res = await requestApi(`/logs?index=${index}`, { method: "DELETE" });
+        showToast(res.message);
+        await loadLogs();
+      } catch (err) {
+        showToast("Gagal menghapus: " + err.message, true);
+        btn.disabled = false;
+      }
+    }
+
+    async function checkHealth() {
+      try {
+        const h = await requestApi("/health");
+        apiVersion = h.version;
+        setStatus(true, `Backend Aktif · v${h.version}`);
+      } catch (_) {
+        setStatus(false, "Backend Tidak Terjangkau");
+      }
+    }
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        $("pageInput").value = chip.dataset.page;
+        $("pageInput").focus();
+      });
+    });
+
+    $("logForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const page = $("pageInput").value.trim();
+      const visitor = $("visitorInput").value.trim();
+      if (!page) {
+        showToast("Field halaman wajib diisi", true);
+        return;
+      }
+      $("submitBtn").disabled = true;
+      try {
+        const res = await addLog(page, visitor);
+        showToast(`Log kunjungan ke ${res.data.page} tersimpan (Total: ${res.total_hits})`);
+        $("pageInput").value = "";
+      } catch (err) {
+        showToast("Gagal menyimpan: " + err.message, true);
+      } finally {
+        $("submitBtn").disabled = false;
+      }
+    });
+
+    $("quickHitBtn").addEventListener("click", async () => {
+      const samplePages = ["/beranda", "/praktikum/docker", "/praktikum/jenkins-cicd", "/inventaris-lab"];
+      const randomPage = samplePages[Math.floor(Math.random() * samplePages.length)];
+      try {
+        const res = await addLog(randomPage, "visitor-" + Math.floor(100 + Math.random() * 900));
+        showToast(`+1 Hit tercatat pada ${res.data.page}`);
+      } catch (err) {
+        showToast("Gagal mencatat hit: " + err.message, true);
+      }
+    });
+
+    $("refreshBtn").addEventListener("click", loadLogs);
+    $("searchInput").addEventListener("input", () => renderTable(cachedLogs));
+
+    function setupAutoRefresh() {
+      clearInterval(refreshTimer);
+      if ($("autoRefresh").checked) {
+        refreshTimer = setInterval(loadLogs, 5000);
+      }
+    }
+    $("autoRefresh").addEventListener("change", setupAutoRefresh);
+
+    // Otomatis mencatat 1 kunjungan saat dashboard dibuka pertama kali per sesi tab
+    async function recordInitialVisit() {
+      if (sessionStorage.getItem("visit_logged")) return;
+      try {
+        await addLog("/dashboard", "auto-counter");
+        sessionStorage.setItem("visit_logged", "1");
+      } catch (_) {}
+    }
+
+    (async function init() {
+      await checkHealth();
+      await recordInitialVisit();
+      await loadLogs();
+      setupAutoRefresh();
+    })();
+  </script>
+</body>
+</html>
