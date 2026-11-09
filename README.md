@@ -17,7 +17,7 @@ Proyek Ujian Tengah Semester (**Ujian Chunin**) Mata Kuliah **Cloud Computing** 
 
 ## 🎥 Video Demo & Presentasi Kelompok (5–8 Menit)
 
-- **Tautan Video Demo (YouTube / Google Drive):** **[MASUKKAN_LINK_VIDEO_DI_SINI]**
+- **Tautan Video Demo (Google Drive):** **[Buka Video Demo & Presentasi Kelompok](https://drive.google.com/drive/folders/1cT1PAbanATw2cvxq69qWTZ_9_A5up82D?usp=sharing)** (`https://drive.google.com/drive/folders/1cT1PAbanATw2cvxq69qWTZ_9_A5up82D?usp=sharing`)
 - **Cakupan Demonstrasi pada Video:**
   1. Penjelasan arsitektur kontainerisasi, isolasi jaringan `app-net`, dan alur CI/CD.
   2. Demonstrasi UI *real-time* (`fetch()` API), tombol *Delete* tanpa *reload*, pengujian REST API (`200`, `201`, `400 Bad Request`, `404 Not Found`), serta pembuktian **Bind Mount** pada kontainer Nginx.
