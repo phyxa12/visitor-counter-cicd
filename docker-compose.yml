@@ -18,7 +18,7 @@ services:
     expose:
       - "5000"
     ports:
-      - "5000:5000"
+      - "${BACKEND_PORT:-5008}:5000"
     networks:
       - app-net
 
@@ -30,7 +30,7 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "8080:80"
+      - "${FRONTEND_PORT:-8088}:80"
     volumes:
       - ${FRONTEND_DIR:-./frontend}:/usr/share/nginx/html:ro
       - ${FRONTEND_DIR:-./frontend}/nginx.conf:/etc/nginx/conf.d/default.conf:ro

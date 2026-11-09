@@ -1,12 +1,15 @@
 services:
   jenkins:
     build: .
+    image: chunin-jenkins:lts
     container_name: chunin-jenkins
     restart: unless-stopped
     user: root
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
     ports:
       - "8090:8080"
-      - "50000:50000"
+      - "50090:50000"
     volumes:
       - /var/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
