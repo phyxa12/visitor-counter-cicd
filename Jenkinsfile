@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_VERSION  = "1.0.${BUILD_NUMBER}"
-        FRONTEND_DIR = "D:/UTS/CC/visitor-counter-agent/frontend"
+        FRONTEND_DIR = "/run/desktop/mnt/host/d/UTS/CC/visitor-counter-agent/frontend"
     }
 
     stages {

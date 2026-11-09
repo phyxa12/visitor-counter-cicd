@@ -1,4 +1,4 @@
-name: visitor-counter
+name: visitor-counter-agent
 
 services:
   backend:
