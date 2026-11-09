@@ -17,3 +17,21 @@ services:
       - /var/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
       - D:/UTS/CC/visitor-counter-agent:/host_project
+
+  webhook-relay:
+    image: chunin-jenkins:lts
+    container_name: chunin-webhook-relay
+    restart: unless-stopped
+    user: root
+    depends_on:
+      - jenkins
+    environment:
+      SMEE_URL: "https://smee.io/tdH2L1SbpkA2L0S"
+      JENKINS_WEBHOOK_URL: "http://chunin-jenkins:8080/github-webhook/"
+      REPO_FULL_NAME: "phyxa12/visitor-counter-cicd-agent"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    volumes:
+      - ./smee_relay.py:/app/smee_relay.py:ro
+    entrypoint: ["python3", "/app/smee_relay.py"]
