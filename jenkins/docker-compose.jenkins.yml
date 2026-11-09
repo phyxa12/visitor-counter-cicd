@@ -16,3 +16,4 @@ services:
     volumes:
       - /var/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - D:/UTS/CC/visitor-counter-agent:/host_project

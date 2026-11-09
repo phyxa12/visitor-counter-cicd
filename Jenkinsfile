@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         APP_VERSION  = "1.0.${BUILD_NUMBER}"
-        FRONTEND_DIR = "/var/jenkins_home/frontend_live"
+        FRONTEND_DIR = "D:/UTS/CC/visitor-counter-agent/frontend"
     }
 
     stages {
@@ -39,8 +39,9 @@ pipeline {
             steps {
                 echo "=== [Stage 4/5] Deploy Fullstack Containers via Docker Compose ==="
                 sh '''
-                    mkdir -p ${FRONTEND_DIR}
-                    cp -rf frontend/* ${FRONTEND_DIR}/
+                    if [ -d /host_project/frontend ]; then
+                        cp -rf frontend/* /host_project/frontend/
+                    fi
                     docker rm -f visitor-backend visitor-frontend 2>/dev/null || true
                     docker compose up -d --force-recreate --remove-orphans
                     docker compose ps
